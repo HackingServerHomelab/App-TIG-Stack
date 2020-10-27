@@ -1,17 +1,20 @@
 # App-TIG-Stack
 
+## First Time Prerequisites
+
+1. Run [Traefik](https://github.com/mattlombana/App-Traefik)
+
 ## Running the Containers
 
-1. Run `./Config/gen_certs.sh` to generate the SSL certificates (alternatively,
-   add custom certs to the private folder)
-2. Update the `server_name` in [nginx.conf](./Config/nginx.conf)
-3. Update the following volume mounts in [docker-compose.yml](./Docker/docker-compose.yml)
+1. Update the following volume mounts in [docker-compose.yml](./Docker/docker-compose.yml)
     * `../Data/grafana:/var/lib/grafana`
     * `../Data/influxdb:/var/lib/influxdb`
-3. Update the following environment variables in [docker-compose.yml](./Docker/docker-compose.yml)
+2. Update the following environment variables in [docker-compose.yml](./Docker/docker-compose.yml)
     * `"FG_SERVER_ROOT_URL=CHANGEME.example.com"`
     * `"INFLUXDB_ADMIN_USER=admin"`
     * `"INFLUXDB_ADMIN_PASSWORD=changeme"`
+3. Update the Traefik host label in [docker-compose.yml](./Docker/docker-compose.yml)
+    * ``"traefik.http.routers.grafana.rule=Host(`localhost`)"``
 4. Modify the InfluxDB user and password in [influxdb-init.iql](./Config/influxdb-scripts/influxdb-init.iql)
 5. Run `docker-compose -f ./Docker/docker-compose.yml up -d`
 

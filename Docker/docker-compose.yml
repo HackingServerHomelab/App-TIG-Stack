@@ -10,6 +10,16 @@ services:
       - ../Data/grafana:/var/lib/grafana
     environment:
       - "FG_SERVER_ROOT_URL=CHANGEME.example.com"
+    labels:
+      # Traefik Labels
+      - "traefik.enable=true"
+      # HTTPS Labels
+      - "traefik.http.routers.grafana.rule=Host(`localhost`)" # Domain Name
+      - "traefik.http.routers.grafana.entrypoints=web-secure"
+      - "traefik.http.routers.grafana.middlewares=default-headers@file"
+      - "traefik.http.routers.grafana.service=grafana"
+      - "traefik.http.routers.grafana.tls=true"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000" # Proxied Port
   influxdb:
     image: influxdb:latest
     container_name: influxdb
@@ -23,17 +33,6 @@ services:
     environment:
       - "INFLUXDB_ADMIN_USER=admin"
       - "INFLUXDB_ADMIN_PASSWORD=changeme"
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    hostname: nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ../Config/nginx.conf:/etc/nginx/nginx.conf
-      - ../Data/nginx:/etc/ssl/private
   # Just for collecting sample metrics from this host
   telegraf:
     image: telegraf:latest
